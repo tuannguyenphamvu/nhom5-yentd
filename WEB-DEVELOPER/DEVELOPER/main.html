@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Traffic Control — Premium Enterprise Dashboard 2026</title>
+  <link rel="stylesheet" href="main.css">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- ══ PARTICLE BACKGROUND CANVAS ══ -->
+  <canvas id="particleCanvas" class="particle-overlay"></canvas>
+
+  <div id="demoBanner" class="neon-banner">
+    <div class="demo-pulse neon-led"></div>
+    <span>⚡ DEMO MODE — ESP32 chưa kết nối. Đang hiển thị dữ liệu mô phỏng thực tế.</span>
+    <button class="demo-connect-btn neon-hover" id="btnConnect">Kết Nối ESP32</button>
+  </div>
+  <div id="toasts" class="neon-toasts"></div>
+
+  <div id="shell" class="high-tech-shell">
+
+    <!-- SIDEBAR -->
+    <aside id="sidebar" class="sidebar-neon">
+      <div class="sb-brand neon-logo">
+        <div class="sb-logo">
+          <svg viewBox="0 0 32 32" fill="none" class="neon-svg">
+            <circle cx="16" cy="16" r="15" stroke="rgba(32,202,255,.45)" stroke-width="1.2"/>
+            <circle cx="16" cy="8"  r="5" fill="#ff3a5c" opacity=".95"/>
+            <circle cx="16" cy="16" r="5" fill="#ffb020" opacity=".85"/>
+            <circle cx="16" cy="24" r="5" fill="#00e87a"/>
+            <line x1="16" y1="4" x2="16" y2="6" stroke="#ff3a5c" stroke-width="1.8" stroke-linecap="round"/>
+            <line x1="16" y1="26" x2="16" y2="30" stroke="rgba(32,202,255,.55)" stroke-width="1.8" stroke-linecap="round"/>
+          </svg>
+          <div class="orbit-ring neon-orbit"></div>
+          <div class="orbit-ring neon-orbit-2"></div>
+        </div>
+        <div>
+          <span class="sb-brand-name neon-text">AI TRAFFIC</span>
+          <span class="sb-brand-sub neon-sub">Premium Control Center 2026</span>
+        </div>
+      </div>
+
+      <div class="sb-conn neon-conn">
+        <div class="sb-conn-inner">
+          <div class="conn-led demo neon-led-pulse" id="connLed"></div>
+          <span class="sb-conn-text neon-hover" id="connText">Demo Mode</span>
+        </div>
+      </div>
+
+      <nav class="sb-nav neon-nav">
+        <div class="nav-item active neon-item" data-s="overview">
+          <svg class="nav-icon neon-svg" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8">
+            <rect x="2" y="2" width="7" height="7" rx="1.5"/><rect x="11" y="2" width="7" height="7" rx="1.5"/>
+            <rect x="2" y="11" width="7" height="7" rx="1.5"/><rect x="11" y="11" width="7" height="7" rx="1.5"/>
+          </svg>
+          <span class="nav-label neon-text">Tổng Quan</span>
+        </div>
+        <div class="nav-item neon-item" data-s="violations">
+          <svg class="nav-icon neon-svg" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8">
+            <path d="M10 2L2 17h16L10 2z"/><line x1="10" y1="9" x2="10" y2="13"/>
+            <circle cx="10" cy="15.5" r=".5" fill="currentColor"/>
+          </svg>
+          <span class="nav-label neon-text">Vi Phạm</span>
+          <span class="nav-badge zero" id="navBadge">0</span>
+        </div>
+        <div class="nav-item neon-item" data-s="camera">
+          <svg class="nav-icon neon-svg" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8">
+            <rect x="1" y="5" width="14" height="11" rx="2"/><path d="M15 8l4-2v8l-4-2V8z"/>
+          </svg>
+          <span class="nav-label neon-text">Camera Live</span>
+        </div>
+
+        <!-- ★ LAPTOP CAMERA ★ -->
+        <div class="nav-item neon-item" data-s="laptop">
+          <svg class="nav-icon neon-svg" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8">
+            <rect x="1" y="3" width="18" height="12" rx="2.5"/>
+            <circle cx="10" cy="6" r="1.3" fill="currentColor" opacity=".55"/>
+            <path d="M0 17h20" stroke-linecap="round"/>
+            <path d="M6 15l-.7 2M14 15l.7 2"/>
+          </svg>
+          <span class="nav-label neon-text">Camera Laptop</span>
+          <span class="nav-badge" id="lapNavBadge" style="background:var(--t3);font-size:8.5px">OFF</span>
+        </div>
+
+        <div class="nav-item neon-item" data-s="devices">
+          <svg class="nav-icon neon-svg" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8">
+            <circle cx="10" cy="10" r="3"/>
+            <path d="M10 1v3M10 16v3M1 10h3M16 10h3M3.64 3.64l2.12 2.12M14.24 14.24l2.12 2.12M3.64 16.36l2.12-2.12M14.24 5.76l2.12-2.12"/>
+          </svg>
+          <span class="nav-label neon-text">Thiết Bị &amp; IoT</span>
+        </div>
+        <div class="nav-item neon-item" data-s="stats">
+          <svg class="nav-icon neon-svg" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8">
+            <polyline points="2 14 7 9 11 13 18 5"/><line x1="2" y1="18" x2="18" y2="18"/>
+          </svg>
+          <span class="nav-label neon-text">Thống Kê</span>
+        </div>
+        <div class="nav-item neon-item" data-s="settings">
+          <svg class="nav-icon neon-svg" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8">
+            <circle cx="10" cy="10" r="3"/>
+            <path d="M10 1v2M10 17v2M3.22 3.22l1.42 1.42M15.36 15.36l1.42 1.42M1 10h2M17 10h2M3.22 16.78l1.42-1.42M15.36 4.64l1.42-1.42"/>
+          </svg>
+          <span class="nav-label neon-text">Cài Đặt</span>
+        </div>
+      </nav>
+
+      <!-- ★ AI INSIGHTS SIDEBAR WIDGET (MỚI 2026) ★ -->
+      <div class="sb-ai-insights neon-panel">
+        <span class="ai-insights-title neon-text">⚡ AI Insights 2026</span>
+        <ul class="ai-insights-list">
+          <li class="ai-insights-item neon-hover">
+            <span class="ai-insights-label">Detection Accuracy</span>
+            <span class="ai-insights-val ai-val-green">99.5%</span>
+          </li>
+          <li class="ai-insights-item neon-hover">
+            <span class="ai-insights-label">Real-Time Latency</span>
+            <span class="ai-insights-val ai-val-amber">50ms</span>
+          </li>
+          <li class="ai-insights-item neon-hover">
+            <span class="ai-insights-label">Processing FPS</span>
+            <span class="ai-insights-val ai-val-violet">30 FPS</span>
+          </li>
+          <li class="ai-insights-item neon-hover">
+            <span class="ai-insights-label">Model</span>
+            <span class="ai-insights-val ai-val-cyan">YOLOv8n</span>
+          </li>
+        </ul>
+        <div class="ai-insights-bar-wrap">
+          <div class="ai-insights-bar-fill neon-bar-anim"></div>
+        </div>
+      </div>
+
+      <div class="sb-bottom neon-footer">
+        <span class="sb-clock" id="sbClock">--:--:--</span>
+        <div class="sb-date" id="sbDate">--/--/----</div>
+        <button class="logout-btn neon-hover" id="btnLogout">
+          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6">
+            <path d="M13 3h4a1 1 0 011 1v12a1 1 0 01-1 1h-4M9 15l4-4-4-4M2 10h11"/>
+          </svg>
+          <span class="logout-text">Đăng Xuất</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- MAIN -->
+    <div id="main" class="main-neon">
+      <div class="topbar neon-topbar">
+        <div class="topbar-l">
+          <button class="sb-toggle" id="btnToggle"><span></span><span></span><span></span></button>
+          <div class="page-title neon-page-title" id="pageTitle">Tổng Quan Hệ Thống</div>
+        </div>
+        <div class="topbar-r">
+          <div class="weather-pill neon-pill">
+            <span id="weatherIcon">☀️</span>
+            <span id="weatherText">Nắng · Đủ điều kiện</span>
+          </div>
+          <div class="topbar-divider"></div>
+          <div class="user-pill neon-pill">
+            <div class="user-av">A</div>
+            <span>Admin</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="content" id="content">
+
+        <!-- ══ TỔNG QUAN ══ -->
+        <section id="sec-overview" class="section active">
+          <div class="kpi-row">
+            <div class="kpi c-red neon-card">
+              <div class="kpi-ico r">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                  <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+                  <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+                </svg>
+              </div>
+              <div style="flex:1">
+                <div class="kpi-num neon-num" id="kpiViol">0</div>
+                <div class="kpi-lbl">Vi Phạm Hôm Nay</div>
+              </div>
+              <div class="kpi-sub" id="kpiViolSub">+0 giờ qua</div>
+            </div>
+            <div class="kpi c-cyan neon-card">
+              <div class="kpi-ico c">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                  <rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/>
+                </svg>
+              </div>
+              <div style="flex:1">
+                <div class="kpi-num neon-num" id="kpiCams">3</div>
+                <div class="kpi-lbl">Camera Online</div>
+              </div>
+              <div class="kpi-sub" style="color:var(--green)">● Trực Tuyến</div>
+            </div>
+            <div class="kpi c-amber neon-card">
+              <div class="kpi-ico a">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                  <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+                </svg>
+              </div>
+              <div style="flex:1">
+                <div class="kpi-num neon-num" id="kpiUptime">99.4%</div>
+                <div class="kpi-lbl">Uptime Hệ Thống</div>
+              </div>
+              <div class="kpi-sub" style="color:var(--green)">↑ Ổn Định</div>
+            </div>
+            <div class="kpi c-green neon-card">
+              <div class="kpi-ico g">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                </svg>
+              </div>
+              <div style="flex:1">
+                <div class="kpi-num neon-num" id="kpiDetected">0</div>
+                <div class="kpi-lbl">Xe Phát Hiện</div>
+              </div>
+              <div class="kpi-sub">● Hôm Nay</div>
+            </div>
+          </div>
+
+          <!-- ★ AI INSIGHTS FULL-WIDTH BAR (MỚI 2026) ★ -->
+          <div class="ai-insights-bar neon-insights-bar">
+            <div class="ai-insights-chip neon-chip chip-green">
+              <span class="chip-icon">🤖</span>
+              <span class="chip-label">Detection Accuracy</span>
+              <span class="chip-val">99.5%</span>
+            </div>
+            <div class="ai-insights-chip neon-chip chip-amber">
+              <span class="chip-icon">⚡</span>
+              <span class="chip-label">Latency</span>
+              <span class="chip-val">50ms</span>
+            </div>
+            <div class="ai-insights-chip neon-chip chip-violet">
+              <span class="chip-icon">🎞</span>
+              <span class="chip-label">Processing</span>
+              <span class="chip-val">30 FPS</span>
+            </div>
+            <div class="ai-insights-chip neon-chip chip-pink">
+              <span class="chip-icon">📡</span>
+              <span class="chip-label">MQTT Status</span>
+              <span class="chip-val">Demo</span>
+            </div>
+            <div class="ai-insights-chip neon-chip chip-cyan">
+              <span class="chip-icon">🧠</span>
+              <span class="chip-label">Model</span>
+              <span class="chip-val">YOLOv8n + EasyOCR</span>
+            </div>
+            <div class="ai-insights-chip neon-chip chip-green">
+              <span class="chip-icon">🔒</span>
+              <span class="chip-label">System</span>
+              <span class="chip-val">SECURE</span>
+            </div>
+          </div>
+
+          <div class="ov-grid neon-grid">
+            <div class="panel ov-traffic neon-panel">
+              <div class="ph">
+                <span class="ph-title neon-ph-title">Đèn Giao Thông</span>
+                <span class="ph-badge neon-badge" id="tlBadge">AUTO</span>
+              </div>
+              <div class="tl-body">
+                <div class="tl-housing neon-tl-housing">
+                  <div class="tl-bulb tl-r neon-bulb-r" id="tlRed"><div class="tl-bulb-inner"></div></div>
+                  <div class="tl-bulb tl-a neon-bulb-a" id="tlAmber"><div class="tl-bulb-inner"></div></div>
+                  <div class="tl-bulb tl-g neon-bulb-g" id="tlGreen"><div class="tl-bulb-inner"></div></div>
+                </div>
+                <div class="tl-countdown-wrap">
+                  <div class="tl-countdown-label">ĐẾM NGƯỢC</div>
+                  <div class="tl-countdown neon-countdown" id="tlCountdown">--</div>
+                  <div class="tl-countdown-unit">giây</div>
+                </div>
+                <div class="tl-info" style="width:100%">
+                  <div class="tl-info-row"><span class="lbl">Pha hiện tại</span><span class="val" id="tlPhase">--</span></div>
+                  <div class="tl-info-row"><span class="lbl">Chế độ</span><span class="val cyan" id="tlMode">AUTO</span></div>
+                  <div class="tl-info-row"><span class="lbl">Camera</span><span class="val" id="tlCamState">--</span></div>
+                  <div class="tl-info-row"><span class="lbl">Chu kỳ</span><span class="val" style="font-size:9.5px">Xanh30s→Vàng5s→Đỏ30s</span></div>
+                </div>
+                <div class="tl-controls">
+                  <button class="ctrl-btn ctrl-r neon-hover" id="btnRed">● ĐỎ</button>
+                  <button class="ctrl-btn ctrl-a neon-hover" id="btnAmber">● VÀNG</button>
+                  <button class="ctrl-btn ctrl-g neon-hover" id="btnGreen">● XANH</button>
+                  <button class="ctrl-btn ctrl-auto neon-hover" id="btnAuto">⟳ TỰ ĐỘNG</button>
+                </div>
+                <div class="emergency-bar neon-emergency" id="emergBar">⚠ CHẾ ĐỘ KHẨN CẤP ĐANG HOẠT ĐỘNG</div>
+              </div>
+            </div>
+
+            <div class="panel ov-context neon-panel">
+              <div class="ph">
+                <span class="ph-title neon-ph-title">Giới Hạn Ngữ Cảnh ESP32</span>
+                <span class="ph-badge neon-badge" id="ctxBadge">6/6 OK</span>
+              </div>
+              <div class="ctx-grid">
+                <div class="ctx-item neon-ctx-item" id="ctxSpeed"><span class="ctx-emoji">🚗</span>
+                  <div class="ctx-body"><div class="ctx-name">Vận Tốc</div><div class="ctx-val" id="ctxSpeedVal">-- km/h</div><div class="ctx-limit">Giới hạn: &lt; 20 km/h</div></div>
+                  <div class="ctx-led ok" id="ctxSpeedLed"></div></div>
+                <div class="ctx-item neon-ctx-item" id="ctxVeh"><span class="ctx-emoji">🚦</span>
+                  <div class="ctx-body"><div class="ctx-name">Số Phương Tiện</div><div class="ctx-val" id="ctxVehVal">0</div><div class="ctx-limit">Giới hạn: ≤ 6/khung hình</div></div>
+                  <div class="ctx-led ok" id="ctxVehLed"></div></div>
+                <div class="ctx-item neon-ctx-item" id="ctxWeather"><span class="ctx-emoji">☀️</span>
+                  <div class="ctx-body"><div class="ctx-name">Thời Tiết</div><div class="ctx-val" id="ctxWeatherVal">Nắng</div><div class="ctx-limit">Nắng / Mưa nhẹ / Đủ sáng</div></div>
+                  <div class="ctx-led ok" id="ctxWeatherLed"></div></div>
+                <div class="ctx-item neon-ctx-item" id="ctxDist"><span class="ctx-emoji">📏</span>
+                  <div class="ctx-body"><div class="ctx-name">Khoảng Cách</div><div class="ctx-val" id="ctxDistVal">5m</div><div class="ctx-limit">Tối ưu: 5m</div></div>
+                  <div class="ctx-led ok" id="ctxDistLed"></div></div>
+                <div class="ctx-item neon-ctx-item" id="ctxROI"><span class="ctx-emoji">🎯</span>
+                  <div class="ctx-body"><div class="ctx-name">Vùng ROI</div><div class="ctx-val" id="ctxROIVal">STOP_LINE</div><div class="ctx-limit">Chỉ quét tại vạch dừng</div></div>
+                  <div class="ctx-led ok" id="ctxROILed"></div></div>
+                <div class="ctx-item neon-ctx-item" id="ctxCap"><span class="ctx-emoji">📸</span>
+                  <div class="ctx-body"><div class="ctx-name">Tốc Độ Chụp</div><div class="ctx-val" id="ctxCapVal">500ms</div><div class="ctx-limit">≤ 500ms khi đèn đỏ</div></div>
+                  <div class="ctx-led ok" id="ctxCapLed"></div></div>
+              </div>
+            </div>
+
+            <div class="panel ov-recent neon-panel">
+              <div class="ph">
+                <span class="ph-title neon-ph-title">Vi Phạm Gần Đây</span>
+                <button class="act-btn neon-hover" style="font-size:10px" onclick="goTo('violations')">Tất cả →</button>
+              </div>
+              <div class="recent-list" id="recentList"><div class="no-data">Chưa có vi phạm</div></div>
+            </div>
+
+            <div class="panel ov-cams neon-panel">
+              <div class="ph">
+                <span class="ph-title neon-ph-title">Trạng Thái Camera &amp; ESP32</span>
+                <button class="act-btn neon-hover" style="font-size:10px" onclick="goTo('devices')">Chi tiết →</button>
+              </div>
+              <div class="cam-row" id="camRow"></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ══ VI PHẠM ══ -->
+        <section id="sec-violations" class="section">
+          <div class="vio-toolbar neon-toolbar">
+            <div class="search-wrap neon-search">
+              <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6">
+                <circle cx="9" cy="9" r="7"/><line x1="14.5" y1="14.5" x2="18" y2="18"/>
+              </svg>
+              <input class="search-input" id="searchInput" type="text" placeholder="Tìm biển số xe...">
+              <button class="search-btn neon-hover" id="btnSearch">Tìm</button>
+            </div>
+            <select class="filter-sel neon-sel" id="fLight"><option value="">Tất cả pha đèn</option><option value="RED">Đèn Đỏ</option><option value="YELLOW">Đèn Vàng</option></select>
+            <select class="filter-sel neon-sel" id="fType"><option value="">Tất cả loại xe</option><option value="Xe máy">Xe Máy</option><option value="Ô tô">Ô Tô</option></select>
+            <input type="date" class="filter-sel neon-sel" id="fDate" style="color:var(--t1)">
+            <button class="btn-ghost neon-hover" id="btnResetFilter">↺ Reset</button>
+            <div class="export-btns">
+              <button class="exp-btn csv neon-hover" id="btnCSV">↓ CSV</button>
+              <button class="exp-btn pdf neon-hover" id="btnPDF">↓ PDF</button>
+            </div>
+          </div>
+          <div class="panel neon-panel">
+            <div class="vio-table-wrap">
+              <table class="vio-table neon-table">
+                <thead><tr>
+                  <th>ID</th><th>Biển Số</th><th>Loại Xe</th><th>Thời Gian</th>
+                  <th>Pha Đèn</th><th>Tốc Độ</th><th>Vùng ROI</th>
+                  <th>Độ Tin Cậy</th><th>Hình Ảnh</th><th>Chi Tiết</th>
+                </tr></thead>
+                <tbody id="vioBody"><tr class="no-data-row"><td colspan="10">Chưa có dữ liệu vi phạm</td></tr></tbody>
+              </table>
+            </div>
+            <div class="table-foot">
+              <span class="t-count" id="vioCount">0 bản ghi</span>
+              <div class="page-ctrl">
+                <button class="page-btn neon-hover" id="btnPrev">‹ Trước</button>
+                <span class="page-info">Trang <b id="pgCur">1</b> / <b id="pgTotal">1</b></span>
+                <button class="page-btn neon-hover" id="btnNext">Sau ›</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ══ CAMERA LIVE (ESP32) ══ -->
+        <section id="sec-camera" class="section">
+          <div class="cam-grid">
+            <div class="panel cam-main neon-panel">
+              <div class="ph">
+                <span class="ph-title neon-ph-title">Camera Trực Tiếp — ESP32-CAM</span>
+                <div class="cam-ph-right">
+                  <select class="cam-sel neon-sel" id="camSel">
+                    <option value="1">CAM 1 — Vạch Dừng Bắc</option>
+                    <option value="2">CAM 2 — Vạch Dừng Nam</option>
+                    <option value="3">CAM 3 — Vạch Dừng Đông</option>
+                  </select>
+                  <span class="live-dot neon-live-dot">● LIVE</span>
+                </div>
+              </div>
+              <div class="cam-viewport neon-viewport">
+                <div class="cam-ov-top">
+                  <span class="cam-ts" id="camTS">--:--:--</span>
+                  <span class="cam-light-tag red" id="camLightTag">● ĐỎ</span>
+                </div>
+                <img id="camImg" class="cam-img" src="" alt="">
+                <canvas id="camCanvas" class="cam-canvas"></canvas>
+                <div class="roi-overlay" id="roiLine"></div>
+                <div class="cam-ov-bot">
+                  <span class="cam-stat">Phương tiện: <b id="camVehicles">0</b></span>
+                  <span class="cam-stat">Vận tốc TB: <b id="camSpeed">-- km/h</b></span>
+                  <span class="cam-stat">Camera: <b id="camState">ACTIVE</b></span>
+                  <span class="cam-stat">FPS: <b id="camFPS">--</b></span>
+                </div>
+                <div class="cam-scanline neon-scanline"></div>
+              </div>
+              <div class="ai-bar neon-ai-bar">
+                <div class="ai-stat"><span class="ai-lbl">AI Model</span><span class="ai-val">YOLOv8n + EasyOCR</span></div>
+                <div class="ai-stat"><span class="ai-lbl">Đối tượng</span><span class="ai-val">Xe Máy &amp; Ô Tô</span></div>
+                <div class="ai-stat"><span class="ai-lbl">ROI</span><span class="ai-val">STOP_LINE</span></div>
+                <div class="ai-stat"><span class="ai-lbl">Chụp ảnh</span><span class="ai-val" id="aiBurst">500ms khi ĐỎ</span></div>
+                <div class="ai-stat"><span class="ai-lbl">Khoảng cách</span><span class="ai-val">5m</span></div>
+              </div>
+            </div>
+            <div class="cam-side">
+              <div class="panel neon-panel" style="flex:1;display:flex;flex-direction:column">
+                <div class="ph"><span class="ph-title neon-ph-title">Phát Hiện Realtime</span><span class="ph-badge neon-badge" id="detCount">0 xe</span></div>
+                <div class="det-list" id="detList"><div class="no-data">Chờ tín hiệu...</div></div>
+              </div>
+              <div class="panel neon-panel" style="display:flex;flex-direction:column;max-height:260px">
+                <div class="ph"><span class="ph-title neon-ph-title">Nhật Ký Hệ Thống</span><button class="clear-log neon-hover" id="btnClearLog">Xóa</button></div>
+                <div class="cam-log neon-log" id="camLog"><div class="log-l info">[SYSTEM] Dashboard v3.0 — Premium 2026 khởi động</div></div>
+                <div class="log-footer"><span style="font-size:9.5px;color:var(--t3);font-family:var(--mono)" id="logCount">1 dòng</span></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ══ LAPTOP CAMERA ★ ══ -->
+        <section id="sec-laptop" class="section">
+
+          <!-- Top control bar -->
+          <div class="lap-topbar neon-lap-topbar">
+            <div class="lap-topbar-l">
+              <div class="lap-brand-icon">
+                <svg viewBox="0 0 40 40" fill="none">
+                  <rect x="2" y="4" width="36" height="24" rx="4" stroke="var(--cyan)" stroke-width="1.5" fill="rgba(32,202,255,.06)"/>
+                  <circle cx="20" cy="11" r="3" stroke="var(--cyan)" stroke-width="1.2" fill="rgba(32,202,255,.15)"/>
+                  <circle cx="20" cy="11" r="1.2" fill="var(--cyan)" opacity=".8"/>
+                  <path d="M2 30h36" stroke="var(--t3)" stroke-width="1.5" stroke-linecap="round"/>
+                  <path d="M13 28l-2 8M27 28l2 8M9 36h22" stroke="var(--t3)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                  <rect x="8" y="16" width="24" height="10" rx="1.5" fill="rgba(32,202,255,.04)" stroke="var(--rim)"/>
+                </svg>
+              </div>
+              <div class="lap-brand-text">
+                <div class="lap-title neon-text">Camera Laptop — Test &amp; Demo</div>
+                <div class="lap-subtitle">Webcam máy tính thay thế ESP32-CAM · Demo thực tế cho khách hàng &amp; kiểm tra hệ thống AI · Premium 2026</div>
+              </div>
+            </div>
+            <div class="lap-topbar-r">
+              <div class="lap-status-pill neon-status-pill" id="lapStatusPill">
+                <div class="lap-status-dot neon-led-pulse" id="lapStatusDot"></div>
+                <span id="lapStatusTxt">Chưa khởi động</span>
+              </div>
+              <button class="lap-btn-start neon-hover" id="btnLapStart">
+                <svg viewBox="0 0 16 16" fill="currentColor" width="12" height="12"><path d="M3 2l10 6-10 6V2z"/></svg>
+                Bật Camera
+              </button>
+              <button class="lap-btn-stop neon-hover" id="btnLapStop" disabled>
+                <svg viewBox="0 0 16 16" fill="currentColor" width="12" height="12"><rect x="3" y="3" width="10" height="10" rx="2"/></svg>
+                Tắt
+              </button>
+            </div>
+          </div>
+
+          <!-- Main grid -->
+          <div class="lap-grid">
+
+            <!-- LEFT: Feed -->
+            <div class="lap-feed-col">
+
+              <!-- Video viewport -->
+              <div class="panel lap-viewport-panel neon-panel">
+                <div class="ph">
+                  <div style="display:flex;align-items:center;gap:10px">
+                    <span class="ph-title neon-ph-title">Live Feed</span>
+                    <span class="live-dot neon-live-dot" id="lapLiveDot" style="opacity:.3">● LIVE</span>
+                  </div>
+                  <div style="display:flex;align-items:center;gap:10px">
+                    <span class="lap-source-badge neon-badge" id="lapSourceBadge">💻 LAPTOP</span>
+                    <span style="font-family:var(--mono);font-size:9.5px;color:var(--t3)" id="lapResCap">1024×768</span>
+                  </div>
+                </div>
+
+                <div class="lap-viewport neon-viewport" id="lapViewport">
+                  <!-- Idle overlay -->
+                  <div class="lap-idle" id="lapIdle">
+                    <div class="lap-idle-rings">
+                      <div class="lap-ring r1"></div>
+                      <div class="lap-ring r2"></div>
+                      <div class="lap-ring r3"></div>
+                    </div>
+                    <svg class="lap-idle-icon" viewBox="0 0 64 64" fill="none">
+                      <rect x="3" y="6" width="58" height="38" rx="5" stroke="rgba(32,202,255,.35)" stroke-width="1.5"/>
+                      <circle cx="32" cy="18" r="5.5" stroke="rgba(32,202,255,.5)" stroke-width="1.5"/>
+                      <circle cx="32" cy="18" r="2.5" fill="rgba(32,202,255,.4)"/>
+                      <rect x="10" y="28" width="44" height="14" rx="2" fill="rgba(32,202,255,.04)" stroke="rgba(32,202,255,.15)"/>
+                      <path d="M3 47h58M18 44l-2.5 9M46 44l2.5 9M12 53h40" stroke="rgba(32,202,255,.25)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <div class="lap-idle-title">Webcam chưa khởi động</div>
+                    <div class="lap-idle-desc">Nhấn <strong>Bật Camera</strong> để bắt đầu stream<br>Thay thế ESP32-CAM khi chưa có phần cứng</div>
+                    <button class="lap-btn-start lap-btn-start-big neon-hover" id="btnLapStartBig">
+                      <svg viewBox="0 0 16 16" fill="currentColor" width="14" height="14"><path d="M3 2l10 6-10 6V2z"/></svg>
+                      Bật Camera Ngay
+                    </button>
+                  </div>
+
+                  <!-- Video stream -->
+                  <img id="lapImg" class="lap-feed-img" src="" alt="" style="display:none">
+
+                  <!-- Canvas overlay for detection boxes -->
+                  <canvas id="lapCanvas" class="lap-canvas" style="display:none"></canvas>
+
+                  <!-- HUD overlays -->
+                  <div class="lap-hud-top neon-hud" id="lapHudTop" style="display:none">
+                    <div class="lap-hud-left">
+                      <span class="lap-ts" id="lapTS">--:--:--</span>
+                      <span class="lap-fps-tag neon-badge" id="lapFPSTag">-- FPS</span>
+                    </div>
+                    <div class="lap-hud-right">
+                      <span class="lap-source-tag neon-badge">💻 LAPTOP CAM</span>
+                      <span class="cam-light-tag" id="lapLightHud">● XANH</span>
+                    </div>
+                  </div>
+
+                  <div class="lap-hud-bot neon-hud" id="lapHudBot" style="display:none">
+                    <div class="lap-hud-stat"><span>Phương tiện</span><b id="lapVehicles">0</b></div>
+                    <div class="lap-hud-stat"><span>Vận tốc TB</span><b id="lapSpeed">-- km/h</b></div>
+                    <div class="lap-hud-stat"><span>Mode</span><b id="lapMode">IDLE</b></div>
+                    <div class="lap-hud-stat"><span>Đèn</span><b id="lapLightStat">--</b></div>
+                  </div>
+
+                  <!-- ROI line -->
+                  <div class="roi-overlay lap-roi" id="lapROI" style="display:none"></div>
+
+                  <!-- Scanline -->
+                  <div class="cam-scanline neon-scanline" id="lapScanline" style="display:none"></div>
+                </div>
+
+                <!-- AI info bar -->
+                <div class="ai-bar neon-ai-bar">
+                  <div class="ai-stat"><span class="ai-lbl">Nguồn</span><span class="ai-val" id="lapAiSrc">Laptop Webcam</span></div>
+                  <div class="ai-stat"><span class="ai-lbl">Chế Độ</span><span class="ai-val" id="lapAiMode">Demo / Test</span></div>
+                  <div class="ai-stat"><span class="ai-lbl">ROI</span><span class="ai-val">STOP_LINE</span></div>
+                  <div class="ai-stat"><span class="ai-lbl">Đối Tượng</span><span class="ai-val">Xe Máy &amp; Ô Tô</span></div>
+                  <div class="ai-stat"><span class="ai-lbl">Đèn Hiện Tại</span><span class="ai-val" id="lapAiLight">--</span></div>
+                </div>
+              </div>
+
+              <!-- Context limits live -->
+              <div class="panel lap-ctx-panel neon-panel">
+                <div class="ph">
+                  <span class="ph-title neon-ph-title">Ngữ Cảnh ESP32 — Live</span>
+                  <span class="ph-badge neon-badge" id="lapCtxBadge">6/6 OK</span>
+                </div>
+                <div class="lap-ctx-grid">
+                  <div class="lap-ctx-item neon-ctx-item">
+                    <div class="lap-ctx-header">
+                      <span class="lap-ctx-emoji">🚗</span>
+                      <span class="lap-ctx-name">Vận Tốc</span>
+                      <span class="lap-ctx-val" id="lctxSpeedVal">-- km/h</span>
+                      <div class="ctx-led ok" id="lctxSpeedLed"></div>
+                    </div>
+                    <div class="lap-ctx-track"><div class="lap-ctx-fill" id="lctxSpeedBar" style="width:0%"></div></div>
+                    <span class="lap-ctx-limit">Giới hạn &lt; 20 km/h</span>
+                  </div>
+                  <div class="lap-ctx-item neon-ctx-item">
+                    <div class="lap-ctx-header">
+                      <span class="lap-ctx-emoji">🚦</span>
+                      <span class="lap-ctx-name">Phương Tiện</span>
+                      <span class="lap-ctx-val" id="lctxVehVal">0 xe</span>
+                      <div class="ctx-led ok" id="lctxVehLed"></div>
+                    </div>
+                    <div class="lap-ctx-track"><div class="lap-ctx-fill" id="lctxVehBar" style="width:0%"></div></div>
+                    <span class="lap-ctx-limit">Giới hạn ≤ 6/khung hình</span>
+                  </div>
+                  <div class="lap-ctx-item neon-ctx-item">
+                    <div class="lap-ctx-header">
+                      <span class="lap-ctx-emoji">☀️</span>
+                      <span class="lap-ctx-name">Thời Tiết</span>
+                      <span class="lap-ctx-val" id="lctxWeatherVal">Nắng</span>
+                      <div class="ctx-led ok" id="lctxWeatherLed"></div>
+                    </div>
+                    <div class="lap-ctx-track"><div class="lap-ctx-fill ok" style="width:100%"></div></div>
+                    <span class="lap-ctx-limit">Nắng / Mưa nhẹ / Đủ sáng</span>
+                  </div>
+                  <div class="lap-ctx-item neon-ctx-item">
+                    <div class="lap-ctx-header">
+                      <span class="lap-ctx-emoji">📏</span>
+                      <span class="lap-ctx-name">Khoảng Cách</span>
+                      <span class="lap-ctx-val" id="lctxDistVal">5m</span>
+                      <div class="ctx-led ok" id="lctxDistLed"></div>
+                    </div>
+                    <div class="lap-ctx-track"><div class="lap-ctx-fill ok" style="width:100%"></div></div>
+                    <span class="lap-ctx-limit">Tối ưu: 5m</span>
+                  </div>
+                  <div class="lap-ctx-item neon-ctx-item">
+                    <div class="lap-ctx-header">
+                      <span class="lap-ctx-emoji">🎯</span>
+                      <span class="lap-ctx-name">Vùng ROI</span>
+                      <span class="lap-ctx-val" id="lctxROIVal">STOP_LINE</span>
+                      <div class="ctx-led ok" id="lctxROILed"></div>
+                    </div>
+                    <div class="lap-ctx-track"><div class="lap-ctx-fill ok" style="width:100%"></div></div>
+                    <span class="lap-ctx-limit">Chỉ quét tại vạch dừng</span>
+                  </div>
+                  <div class="lap-ctx-item neon-ctx-item">
+                    <div class="lap-ctx-header">
+                      <span class="lap-ctx-emoji">📸</span>
+                      <span class="lap-ctx-name">Tốc Độ Chụp</span>
+                      <span class="lap-ctx-val" id="lctxCapVal">500ms</span>
+                      <div class="ctx-led ok" id="lctxCapLed"></div>
+                    </div>
+                    <div class="lap-ctx-track"><div class="lap-ctx-fill ok" style="width:100%"></div></div>
+                    <span class="lap-ctx-limit">≤ 500ms khi đèn đỏ</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- RIGHT col -->
+            <div class="lap-right-col">
+
+              <!-- Manual test panel -->
+              <div class="panel lap-test-panel neon-panel">
+                <div class="ph"><span class="ph-title neon-ph-title">🔍 Kiểm Tra Biển Số &amp; Vi Phạm</span></div>
+                <div class="lap-test-body">
+
+                  <div class="lap-test-section">
+                    <div class="lap-test-label">Nhập biển số để kiểm tra</div>
+                    <div class="lap-plate-row">
+                      <input class="lap-plate-input neon-input" id="lapPlateInput" type="text" placeholder="VD: 51B-12345" maxlength="12">
+                      <button class="lap-scan-btn neon-hover" id="btnLapScan">🔍 Quét AI</button>
+                    </div>
+                    <div class="lap-scan-result" id="lapScanResult" style="display:none">
+                      <div class="lap-scan-plate neon-text" id="lapScanPlate">--</div>
+                      <div class="lap-scan-info" id="lapScanInfo"></div>
+                    </div>
+                  </div>
+
+                  <div class="lap-test-section">
+                    <div class="lap-test-label">Chụp ảnh &amp; inject vi phạm thủ công</div>
+                    <button class="lap-snap-btn neon-hover" id="btnLapSnap">📸 Snapshot + Ghi Vi Phạm</button>
+                  </div>
+
+                  <div class="lap-test-section">
+                    <div class="lap-test-label">Mô phỏng pha đèn</div>
+                    <div class="lap-light-btns">
+                      <button class="ctrl-btn ctrl-r neon-hover" id="btnLapRed">🔴 Bật Đỏ + Quét</button>
+                      <button class="ctrl-btn ctrl-a neon-hover" id="btnLapAmber">🟡 Vàng</button>
+                      <button class="ctrl-btn ctrl-g neon-hover" id="btnLapGreen">🟢 Xanh</button>
+                      <button class="ctrl-btn ctrl-auto neon-hover" id="btnLapAuto">⟳ Auto</button>
+                    </div>
+                  </div>
+
+                  <div class="lap-test-section">
+                    <div class="lap-test-label">Seed vi phạm demo (không cần camera)</div>
+                    <button class="lap-demo-seed-btn neon-hover" id="btnSeedViol">
+                      ⚡ Tạo 5 Vi Phạm Demo
+                    </button>
+                  </div>
+
+                </div>
+              </div>
+
+              <!-- Detection log -->
+              <div class="panel lap-det-panel neon-panel">
+                <div class="ph">
+                  <span class="ph-title neon-ph-title">Phát Hiện Thời Gian Thực</span>
+                  <span class="ph-badge neon-badge" id="lapDetBadge">0 xe</span>
+                </div>
+                <div class="det-list" id="lapDetList"><div class="no-data">Chờ camera...</div></div>
+              </div>
+
+              <!-- Snapshot gallery -->
+              <div class="panel lap-gallery-panel neon-panel">
+                <div class="ph">
+                  <span class="ph-title neon-ph-title">📷 Ảnh Đã Chụp</span>
+                  <div style="display:flex;gap:7px;align-items:center">
+                    <span class="ph-badge neon-badge" id="lapGalCount">0 ảnh</span>
+                    <button class="clear-log neon-hover" id="btnClearGal">Xóa</button>
+                  </div>
+                </div>
+                <div class="lap-gallery" id="lapGallery">
+                  <div class="no-data">Chưa có ảnh</div>
+                </div>
+              </div>
+
+              <!-- System log -->
+              <div class="panel neon-panel" style="display:flex;flex-direction:column">
+                <div class="ph"><span class="ph-title neon-ph-title">Nhật Ký Camera Laptop</span><button class="clear-log neon-hover" id="btnClearLapLog">Xóa</button></div>
+                <div class="cam-log neon-log" id="lapLog" style="max-height:160px">
+                  <div class="log-l info">[LAPTOP] Premium 2026 — Sẵn sàng khởi động webcam</div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </section>
+
+        <!-- ══ THIẾT BỊ & IoT ══ -->
+        <section id="sec-devices" class="section">
+          <div class="dev-grid neon-grid" id="devGrid"></div>
+          <div class="panel tb-panel neon-panel">
+            <div class="ph">
+              <span class="ph-title neon-ph-title">ThingsBoard IoT — Giám Sát Thiết Bị</span>
+              <div style="display:flex;align-items:center;gap:8px">
+                <div class="tb-dot neon-led-pulse" id="tbDot"></div>
+                <span style="font-size:11px;color:var(--t2)" id="tbLabel">Demo — ThingsBoard Offline</span>
+              </div>
+            </div>
+            <div class="tb-metrics">
+              <div class="tb-metric neon-metric"><div class="tb-m-label">ESP32-CAM #1 Signal</div><div class="tb-m-bar"><div class="tb-m-fill g" style="width:95%"></div></div><div class="tb-m-val">95% — Tốt</div></div>
+              <div class="tb-metric neon-metric"><div class="tb-m-label">ESP32-CAM #2 Signal</div><div class="tb-m-bar"><div class="tb-m-fill" style="width:88%"></div></div><div class="tb-m-val">88% — Tốt</div></div>
+              <div class="tb-metric neon-metric"><div class="tb-m-label">ESP32-CAM #3 Signal</div><div class="tb-m-bar"><div class="tb-m-fill a" style="width:72%"></div></div><div class="tb-m-val">72% — Yếu</div></div>
+              <div class="tb-metric neon-metric"><div class="tb-m-label">Đèn Giao Thông</div><div class="tb-m-bar"><div class="tb-m-fill g" style="width:100%"></div></div><div class="tb-m-val">100% — Online</div></div>
+              <div class="tb-metric neon-metric"><div class="tb-m-label">MQTT Broker</div><div class="tb-m-bar"><div class="tb-m-fill g" id="mqttBar" style="width:100%"></div></div><div class="tb-m-val" id="mqttVal">Demo Mode</div></div>
+              <div class="tb-metric neon-metric"><div class="tb-m-label">AI Server Load</div><div class="tb-m-bar"><div class="tb-m-fill a" id="aiLoadBar" style="width:65%"></div></div><div class="tb-m-val" id="aiLoadVal">65% Load</div></div>
+            </div>
+            <div class="ph" style="border-top:1px solid var(--rim)"><span class="ph-title neon-ph-title">Lịch Sử Cảnh Báo</span></div>
+            <div class="alert-list" id="alertList"><div class="no-data">Chưa có cảnh báo</div></div>
+          </div>
+        </section>
+
+        <!-- ══ THỐNG KÊ ══ -->
+        <section id="sec-stats" class="section">
+          <div class="stats-grid">
+            <div class="panel neon-panel">
+              <div class="ph"><span class="ph-title neon-ph-title">Vi Phạm Theo Giờ (Hôm Nay)</span></div>
+              <div class="chart-area neon-chart-area">
+                <canvas class="chart-particle" id="chartParticleHourly"></canvas>
+                <canvas id="chartHour" height="180"></canvas>
+              </div>
+            </div>
+            <div class="panel neon-panel">
+              <div class="ph"><span class="ph-title neon-ph-title">Phân Loại Vi Phạm</span></div>
+              <div class="donut-wrap"><canvas id="chartDonut" width="160" height="160"></canvas><div class="donut-legend" id="donutLeg"></div></div>
+              <div class="stats-table" id="statTable"></div>
+            </div>
+            <div class="panel chart-wide neon-panel">
+              <div class="ph"><span class="ph-title neon-ph-title">Xu Hướng 7 Ngày Gần Nhất</span></div>
+              <div class="chart-area neon-chart-area">
+                <canvas class="chart-particle" id="chartParticleWeek"></canvas>
+                <canvas id="chartWeek" height="160"></canvas>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ══ CÀI ĐẶT ══ -->
+        <section id="sec-settings" class="section">
+          <div class="settings-grid">
+            <div class="panel neon-panel">
+              <div class="ph"><span class="ph-title neon-ph-title">Cấu Hình Hệ Thống</span></div>
+              <div class="settings-body">
+                <div class="sg">
+                  <div class="sg-title neon-text">Chu Kỳ Đèn Giao Thông</div>
+                  <div class="sg-row"><label>Thời gian Xanh (giây)</label><input class="sg-input neon-input" type="number" id="cfGreen" value="30"></div>
+                  <div class="sg-row"><label>Thời gian Vàng (giây)</label><input class="sg-input neon-input" type="number" id="cfAmber" value="5"></div>
+                  <div class="sg-row"><label>Thời gian Đỏ (giây)</label><input class="sg-input neon-input" type="number" id="cfRed" value="30"></div>
+                </div>
+                <div class="sg">
+                  <div class="sg-title neon-text">Giới Hạn AI &amp; Camera</div>
+                  <div class="sg-row"><label>Vận tốc tối đa (km/h)</label><input class="sg-input neon-input" type="number" id="cfSpeed" value="20"></div>
+                  <div class="sg-row"><label>Xe tối đa / khung hình</label><input class="sg-input neon-input" type="number" id="cfVeh" value="6"></div>
+                  <div class="sg-row"><label>Tốc độ chụp (ms)</label><input class="sg-input neon-input" type="number" id="cfCapture" value="500"></div>
+                  <div class="sg-row"><label>Ngưỡng OCR (%)</label><input class="sg-input neon-input" type="number" id="cfOCR" value="70"></div>
+                </div>
+                <div class="sg">
+                  <div class="sg-title neon-text">Kết Nối ESP32 &amp; MQTT</div>
+                  <div class="sg-row"><label>IP ESP32</label><input class="sg-input neon-input" type="text" id="cfIP" value="192.168.1.100"></div>
+                  <div class="sg-row"><label>MQTT Broker</label><input class="sg-input neon-input" type="text" id="cfMQTT" value="localhost"></div>
+                  <div class="sg-row"><label>MQTT Port</label><input class="sg-input neon-input" type="number" id="cfPort" value="1883"></div>
+                  <div class="sg-row"><label>ThingsBoard URL</label><input class="sg-input neon-input" type="text" id="cfTB" value="http://localhost:8080"></div>
+                </div>
+                <div class="sg-actions">
+                  <button class="btn-primary neon-hover" id="btnSaveCfg">Lưu Cài Đặt</button>
+                  <button class="btn-sec neon-hover" id="btnResetCfg">Khôi Phục Mặc Định</button>
+                </div>
+              </div>
+            </div>
+            <div>
+              <div class="panel neon-panel">
+                <div class="ph"><span class="ph-title neon-ph-title">Thông Tin Hệ Thống</span></div>
+                <div class="sysinfo" id="sysInfo">
+                  <div class="si-row"><span class="si-k">Dashboard</span><span class="si-v">v3.0.0 — Premium 2026</span></div>
+                  <div class="si-row"><span class="si-k">AI Model</span><span class="si-v">YOLOv8n</span></div>
+                  <div class="si-row"><span class="si-k">OCR</span><span class="si-v">EasyOCR 1.7</span></div>
+                  <div class="si-row"><span class="si-k">MQTT</span><span class="si-v">v3.1.1</span></div>
+                  <div class="si-row"><span class="si-k">ESP32 FW</span><span class="si-v" id="siESP">Demo</span></div>
+                  <div class="si-row"><span class="si-k">Tổng vi phạm</span><span class="si-v" id="siTotal">0</span></div>
+                  <div class="si-row"><span class="si-k">Uptime</span><span class="si-v" id="siUptime">0s</span></div>
+                  <div class="si-row"><span class="si-k">Font Engine</span><span class="si-v">Syne + DM Sans 2026</span></div>
+                  <div class="si-row"><span class="si-k">Detection Acc.</span><span class="si-v si-v-green">99.5%</span></div>
+                  <div class="si-row"><span class="si-k">Avg Latency</span><span class="si-v si-v-amber">50ms</span></div>
+                </div>
+                <div class="sys-btns">
+                  <button class="sys-btn neon-hover" id="btTestCam">🔍 Test Camera</button>
+                  <button class="sys-btn neon-hover" id="btTestMQTT">📡 Test MQTT</button>
+                  <button class="sys-btn neon-hover" id="btTestAI">🤖 Test AI</button>
+                  <button class="sys-btn danger neon-hover" id="btClearDB">🗑 Xóa Database</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ MODAL (3D Neon Upgraded) ══ -->
+  <div class="modal neon-modal" id="modal">
+    <div class="modal-bg" id="modalBg"></div>
+    <div class="modal-box neon-modal-box">
+      <button class="modal-close neon-hover" id="modalClose">✕</button>
+      <div class="modal-head neon-modal-head">
+        <div class="modal-id">VI PHẠM #<span id="mID">--</span></div>
+        <div class="modal-plate-big neon-text" id="mPlate">--</div>
+      </div>
+      <div class="modal-body neon-modal-body">
+        <div class="modal-img-col">
+          <div id="mImgWrap" style="background:#000;min-height:200px;display:flex;align-items:center;justify-content:center">
+            <img id="mImg" class="modal-image" src="" alt="" style="display:none">
+            <div id="mImgPlaceholder" style="font-size:60px;opacity:.3">📷</div>
+          </div>
+          <div class="modal-img-foot">
+            <span id="mOCR">OCR: --</span><span id="mConf">Tin cậy: --%</span>
+          </div>
+        </div>
+        <div class="modal-meta">
+          <div class="mm-row"><div class="mm-ico r">🚨</div><div><div class="mm-label">Pha Đèn Vi Phạm</div><div class="mm-val" id="mLight">--</div></div></div>
+          <div class="mm-row"><div class="mm-ico a">⏱</div><div><div class="mm-label">Thời Gian</div><div class="mm-val" id="mTime">--</div></div></div>
+          <div class="mm-row"><div class="mm-ico c">🚗</div><div><div class="mm-label">Loại Phương Tiện</div><div class="mm-val" id="mType">--</div></div></div>
+          <div class="mm-row"><div class="mm-ico g">💨</div><div><div class="mm-label">Tốc Độ</div><div class="mm-val" id="mSpeed">--</div></div></div>
+          <div class="mm-row"><div class="mm-ico">🎯</div><div><div class="mm-label">Vùng ROI</div><div class="mm-val" id="mROI">--</div></div></div>
+          <div class="mm-row"><div class="mm-ico">📷</div><div><div class="mm-label">Camera</div><div class="mm-val" id="mCam">--</div></div></div>
+        </div>
+      </div>
+      <div class="modal-foot neon-modal-foot">
+        <button class="mf-btn primary neon-hover" id="btnDlImg">↓ Tải Hình</button>
+        <button class="mf-btn sec neon-hover" id="btnPrint">🖨 In Biên Bản</button>
+        <button class="mf-btn danger neon-hover" id="btnDelRec">Xóa Bản Ghi</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="main.js"></script>
+</body>
+</html>

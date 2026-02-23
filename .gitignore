@@ -1,0 +1,5 @@
+WEB-DEVELOPER/server/.venv/
+WEB-DEVELOPER/server/__pycache__/
+WEB-DEVELOPER/server/*.db
+WEB-DEVELOPER/server/*.pt
+WEB-DEVELOPER/server/config.env
